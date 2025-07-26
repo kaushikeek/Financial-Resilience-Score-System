@@ -1,6 +1,8 @@
 # === Python (server) ===
 server/venv/
 server/__pycache__/
+server/app/__pycache__/
+server/app/api/__pycache__/
 server/.pytest_cache/
 server/*.pyc
 
