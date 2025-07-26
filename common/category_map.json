@@ -1,0 +1,13 @@
+{
+  "amazon": "Shopping",
+  "flipkart": "Shopping",
+  "zomato": "Dining",
+  "swiggy": "Dining",
+  "uber": "Transport",
+  "ola": "Transport",
+  "hdfc emi": "Loan EMI",
+  "electricity": "Utilities",
+  "salary": "Income",
+  "rent": "Housing",
+  "atm": "Cash Withdrawal"
+}
