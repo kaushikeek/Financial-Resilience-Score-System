@@ -1,43 +1,132 @@
-import { Routes, Route, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { Route, Routes, Navigate } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
+
 import { supabase } from "./lib/supabase";
-import Upload from "./pages/Upload";
+
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
-import Login from "./pages/Login"; // <-- import Login
+import ScoreDetails from "./pages/ScoreDetails";
+import Forecast from "./pages/Forecast";
+import Chatbot from "./pages/Chatbot";
+import StatementUpload from "./pages/StatementUpload";
+import Gamification from "./pages/Gamification";
+import Settings from "./pages/Settings";
+
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import ProtectedLayout from "./layouts/ProtectedLayout";
 
 function App() {
-	const [user, setUser] = useState(null);
+	const [session, setSession] = useState(null);
 
 	useEffect(() => {
-		const getUser = async () => {
-			const { data } = await supabase.auth.getSession();
-			setUser(data?.session?.user ?? null);
-		};
-
-		getUser();
-
-		const { data: authListener } = supabase.auth.onAuthStateChange(
-			(_event, session) => {
-				setUser(session?.user ?? null);
-			}
-		);
-
-		return () => authListener.subscription.unsubscribe();
+		supabase.auth.getSession().then(({ data: { session } }) => {
+			setSession(session);
+		});
+		supabase.auth.onAuthStateChange((_event, session) => {
+			setSession(session);
+		});
 	}, []);
 
 	return (
-		<Routes>
-			<Route path="/login" element={<Login />} />
-			<Route
-				path="/upload"
-				element={user ? <Upload user={user} /> : <Navigate to="/login" />}
-			/>
-			<Route
-				path="/dashboard"
-				element={user ? <Dashboard user={user} /> : <Navigate to="/login" />}
-			/>
-			<Route path="*" element={<Navigate to="/upload" />} />
-		</Routes>
+		<>
+			<Toaster position="top-right" />
+
+			{/* Public Pages */}
+			<Routes>
+				<Route
+					path="/"
+					element={
+						<>
+							<Header session={session} />
+							<Home />
+							<Footer />
+						</>
+					}
+				/>
+				<Route
+					path="/login"
+					element={
+						<>
+							<Header session={session} />
+							<Login />
+							<Footer />
+						</>
+					}
+				/>
+				<Route
+					path="/signup"
+					element={
+						<>
+							<Header session={session} />
+							<Signup />
+							<Footer />
+						</>
+					}
+				/>
+
+				{/* Protected Pages */}
+				<Route
+					path="/dashboard"
+					element={
+						<ProtectedLayout>
+							<Dashboard />
+						</ProtectedLayout>
+					}
+				/>
+				<Route
+					path="/score-details"
+					element={
+						<ProtectedLayout>
+							<ScoreDetails />
+						</ProtectedLayout>
+					}
+				/>
+				<Route
+					path="/forecast"
+					element={
+						<ProtectedLayout>
+							<Forecast />
+						</ProtectedLayout>
+					}
+				/>
+				<Route
+					path="/chatbot"
+					element={
+						<ProtectedLayout>
+							<Chatbot />
+						</ProtectedLayout>
+					}
+				/>
+				<Route
+					path="/upload"
+					element={
+						<ProtectedLayout>
+							<StatementUpload />
+						</ProtectedLayout>
+					}
+				/>
+				<Route
+					path="/gamification"
+					element={
+						<ProtectedLayout>
+							<Gamification />
+						</ProtectedLayout>
+					}
+				/>
+				<Route
+					path="/settings"
+					element={
+						<ProtectedLayout>
+							<Settings />
+						</ProtectedLayout>
+					}
+				/>
+			</Routes>
+		</>
 	);
 }
 
