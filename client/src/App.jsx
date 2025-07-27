@@ -1,38 +1,44 @@
-import React from "react";
-import { useDropzone } from "react-dropzone";
-import axios from "axios";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { supabase } from "./lib/supabase";
+import Upload from "./pages/Upload";
+import Dashboard from "./pages/Dashboard";
+import Login from "./pages/Login"; // <-- import Login
 
 function App() {
-  const onDrop = async (acceptedFiles) => {
-    const file = acceptedFiles[0];
-    const formData = new FormData();
-    formData.append("file", file);
+	const [user, setUser] = useState(null);
 
-    try {
-      const response = await axios.post("http://localhost:8000/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      alert(`Upload successful: ${JSON.stringify(response.data)}`);
-    } catch (err) {
-      alert("Upload failed");
-      console.error(err);
-    }
-  };
+	useEffect(() => {
+		const getUser = async () => {
+			const { data } = await supabase.auth.getSession();
+			setUser(data?.session?.user ?? null);
+		};
 
-  const { getRootProps, getInputProps } = useDropzone({ onDrop });
+		getUser();
 
-  return (
-    <div className="min-h-screen flex flex-col justify-center items-center bg-gray-50 p-4">
-      <h1 className="text-2xl font-bold mb-4">Upload Bank Statement</h1>
-      <div
-        {...getRootProps()}
-        className="w-96 h-40 border-4 border-dashed border-blue-400 rounded-lg flex items-center justify-center cursor-pointer hover:bg-blue-50"
-      >
-        <input {...getInputProps()} />
-        <p className="text-gray-600">Drag & drop a PDF or CSV file here</p>
-      </div>
-    </div>
-  );
+		const { data: authListener } = supabase.auth.onAuthStateChange(
+			(_event, session) => {
+				setUser(session?.user ?? null);
+			}
+		);
+
+		return () => authListener.subscription.unsubscribe();
+	}, []);
+
+	return (
+		<Routes>
+			<Route path="/login" element={<Login />} />
+			<Route
+				path="/upload"
+				element={user ? <Upload user={user} /> : <Navigate to="/login" />}
+			/>
+			<Route
+				path="/dashboard"
+				element={user ? <Dashboard user={user} /> : <Navigate to="/login" />}
+			/>
+			<Route path="*" element={<Navigate to="/upload" />} />
+		</Routes>
+	);
 }
 
 export default App;
