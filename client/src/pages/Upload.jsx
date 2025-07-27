@@ -1,69 +1,67 @@
-import React, { useEffect, useState } from "react";
-import { useDropzone } from "react-dropzone";
-import axios from "axios";
-import { supabase } from "../lib/supabase"; // Adjust if needed
+import { useState } from "react";
+import { FaUpload } from "react-icons/fa";
+import toast from "react-hot-toast";
+import Sidebar from "../components/Sidebar";
+import MainLayout from "../layouts/MainLayout";
 
-function Upload() {
-	const [user, setUser] = useState(null);
+const Upload = () => {
+	const [selectedFile, setSelectedFile] = useState(null);
 
-	useEffect(() => {
-		const getUser = async () => {
-			const {
-				data: { session },
-			} = await supabase.auth.getSession();
-
-			setUser(session?.user ?? null);
-		};
-
-		getUser();
-
-		const { data: listener } = supabase.auth.onAuthStateChange(
-			(_event, session) => {
-				setUser(session?.user ?? null);
-			}
-		);
-
-		return () => {
-			listener.subscription.unsubscribe();
-		};
-	}, []);
-
-	const onDrop = async (acceptedFiles) => {
-		const file = acceptedFiles[0];
-		const formData = new FormData();
-		formData.append("file", file);
-		formData.append("user_id", user?.id);
-
-		try {
-			const response = await axios.post(
-				"http://localhost:8000/upload",
-				formData,
-				{
-					headers: { "Content-Type": "multipart/form-data" },
-				}
-			);
-			alert(`Upload successful: ${JSON.stringify(response.data)}`);
-		} catch (err) {
-			alert("Upload failed");
-			console.error(err);
-		}
+	const handleFileChange = (e) => {
+		setSelectedFile(e.target.files[0]);
 	};
 
-	const { getRootProps, getInputProps } = useDropzone({ onDrop });
+	const handleUpload = () => {
+		if (!selectedFile) {
+			toast.error("Please select a file to upload.");
+			return;
+		}
 
-	if (!user) return <p className="p-4">Loading user...</p>;
+		// This is where you'd typically send the file to the backend
+		toast.success(`Uploaded: ${selectedFile.name}`);
+		setSelectedFile(null);
+	};
 
 	return (
-		<div className="min-h-screen flex flex-col justify-center items-center bg-gray-50 p-4">
-			<h1 className="text-2xl font-bold mb-4">Upload Bank Statement</h1>
-			<div
-				{...getRootProps()}
-				className="w-96 h-40 border-4 border-dashed border-blue-400 rounded-lg flex items-center justify-center cursor-pointer hover:bg-blue-50">
-				<input {...getInputProps()} />
-				<p className="text-gray-600">Drag & drop a PDF or CSV file here</p>
+		<MainLayout>
+			<div className="min-h-screen bg-gradient-to-br from-emerald-50 to-white py-12 px-6">
+				<div className="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow">
+					<h1 className="text-2xl font-bold text-emerald-700 mb-4 text-center">
+						Upload Your Statement
+					</h1>
+					<p className="text-gray-600 mb-6 text-center">
+						Supported formats: <strong>CSV, PDF, Excel</strong>
+					</p>
+
+					<div className="flex flex-col items-center gap-4">
+						<label
+							htmlFor="file-upload"
+							className="cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white py-2 px-6 rounded-lg flex items-center gap-2 shadow transition">
+							<FaUpload />
+							<span>{selectedFile ? "Change File" : "Choose File"}</span>
+						</label>
+						<input
+							id="file-upload"
+							type="file"
+							accept=".csv,.pdf,.xls,.xlsx"
+							onChange={handleFileChange}
+							className="hidden"
+						/>
+						{selectedFile && (
+							<p className="text-sm text-gray-700">
+								Selected: <strong>{selectedFile.name}</strong>
+							</p>
+						)}
+						<button
+							onClick={handleUpload}
+							className="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-6 rounded-lg shadow transition mt-4">
+							Upload
+						</button>
+					</div>
+				</div>
 			</div>
-		</div>
+		</MainLayout>
 	);
-}
+};
 
 export default Upload;

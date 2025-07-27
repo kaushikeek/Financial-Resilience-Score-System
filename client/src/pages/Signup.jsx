@@ -4,42 +4,38 @@ import { supabase } from "../lib/supabase";
 import { FcGoogle } from "react-icons/fc";
 import toast from "react-hot-toast";
 
-const Login = () => {
+const Signup = () => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const navigate = useNavigate();
 
-	const handleLogin = async (e) => {
+	const handleSignup = async (e) => {
 		e.preventDefault();
-		const { error } = await supabase.auth.signInWithPassword({
-			email,
-			password,
-		});
+		const { error } = await supabase.auth.signUp({ email, password });
 
 		if (error) {
 			toast.error(error.message);
 		} else {
-			toast.success("Login successful!");
-			navigate("/dashboard");
+			toast.success("Check your inbox to confirm your email.");
+			navigate("/login");
 		}
 	};
 
-	const handleGoogleLogin = async () => {
+	const handleGoogleSignup = async () => {
 		const { error } = await supabase.auth.signInWithOAuth({
 			provider: "google",
 		});
-
 		if (error) toast.error(error.message);
 	};
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-sky-50 to-emerald-100 flex items-center justify-center">
+		<div className="min-h-screen bg-gradient-to-br from-emerald-50 to-sky-100 flex items-center justify-center">
 			<div className="bg-white shadow-xl rounded-2xl p-10 w-full max-w-md">
 				<h2 className="text-2xl font-bold text-center text-emerald-700 mb-6">
-					Log In to ResilienceScore
+					Create Your ResilienceScore Account
 				</h2>
 
-				<form onSubmit={handleLogin} className="space-y-4">
+				<form onSubmit={handleSignup} className="space-y-4">
 					<div>
 						<label className="block text-sm text-gray-700">Email</label>
 						<input
@@ -64,7 +60,7 @@ const Login = () => {
 					<button
 						type="submit"
 						className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-md font-semibold transition">
-						Log In
+						Sign Up
 					</button>
 				</form>
 
@@ -75,20 +71,18 @@ const Login = () => {
 				</div>
 
 				<button
-					onClick={handleGoogleLogin}
+					onClick={handleGoogleSignup}
 					className="w-full flex items-center justify-center gap-2 border border-gray-300 rounded-md py-2 hover:bg-gray-50 transition">
 					<FcGoogle className="text-xl" />
-					<span className="font-medium text-gray-700">
-						Continue with Google
-					</span>
+					<span className="font-medium text-gray-700">Sign Up with Google</span>
 				</button>
 
 				<p className="text-center text-sm text-gray-600 mt-6">
-					Don't have an account?{" "}
+					Already have an account?{" "}
 					<a
-						href="/signup"
+						href="/login"
 						className="text-emerald-700 font-medium hover:underline">
-						Sign Up
+						Log In
 					</a>
 				</p>
 			</div>
@@ -96,4 +90,4 @@ const Login = () => {
 	);
 };
 
-export default Login;
+export default Signup;
