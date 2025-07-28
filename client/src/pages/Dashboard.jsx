@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FaChartLine, FaUpload, FaRobot, FaTrophy } from "react-icons/fa";
-import { supabase } from "../lib/supabaseClient";
+import { supabase } from "../lib/supabase.js";
 import MainLayout from "../layouts/MainLayout";
 
 const Dashboard = () => {
