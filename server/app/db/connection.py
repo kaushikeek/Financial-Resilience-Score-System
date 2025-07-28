@@ -1,4 +1,4 @@
-# server/app/db/connection.py
+
 
 import os
 import psycopg2
