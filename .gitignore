@@ -4,6 +4,8 @@ server/__pycache__/
 server/app/__pycache__/
 server/app/api/__pycache__/
 server/.pytest_cache/
+server/app/db/__pycache__/
+server/app/services/__pycache__/
 server/*.pyc
 
 # === Python Artifacts ===
