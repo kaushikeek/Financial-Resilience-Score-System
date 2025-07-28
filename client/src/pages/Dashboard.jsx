@@ -1,9 +1,38 @@
-// src/pages/Dashboard.jsx
+
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FaChartLine, FaUpload, FaRobot, FaTrophy } from "react-icons/fa";
-import Sidebar from "../components/Sidebar";
+import { supabase } from "../lib/supabaseClient";
 import MainLayout from "../layouts/MainLayout";
+
 const Dashboard = () => {
+	const [score, setScore] = useState(null);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState(null);
+
+	useEffect(() => {
+		const fetchScore = async () => {
+			setLoading(true);
+			try {
+				const { data, error } = await supabase
+					.from("scores")
+					.select("score")
+					.order("created_at", { ascending: false })
+					.limit(1)
+					.single();
+
+				if (error) throw error;
+				setScore(data?.score || "N/A");
+			} catch (err) {
+				setError("Could not fetch score.");
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchScore();
+	}, []);
+
 	return (
 		<MainLayout>
 			<div className="min-h-screen bg-gradient-to-br from-white to-emerald-50 py-12 px-6 pl-64">
@@ -12,11 +41,14 @@ const Dashboard = () => {
 				</h1>
 
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+					{/* Resilience Score Box */}
 					<div className="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
 						<h2 className="text-2xl font-semibold text-indigo-600 mb-4">
 							Resilience Score
 						</h2>
-						<div className="text-4xl font-bold text-emerald-700 mb-2">78</div>
+						<div className="text-4xl font-bold text-emerald-700 mb-2">
+							{loading ? "Loading..." : error ? "—" : score}
+						</div>
 						<p className="text-gray-600 text-sm">
 							Based on latest uploaded data
 						</p>
@@ -27,13 +59,14 @@ const Dashboard = () => {
 						</Link>
 					</div>
 
+					{/* Trends */}
 					<div className="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
 						<h2 className="text-xl font-semibold text-indigo-600 mb-4 flex items-center gap-2">
 							<FaChartLine /> Trends
 						</h2>
-						<div className="text-sm text-gray-700">
+						<p className="text-sm text-gray-700">
 							Visualize your expenses and resilience score trajectory.
-						</div>
+						</p>
 						<Link
 							to="/forecast"
 							className="inline-block mt-4 text-indigo-600 hover:underline text-sm">
@@ -41,6 +74,7 @@ const Dashboard = () => {
 						</Link>
 					</div>
 
+					{/* Upload */}
 					<div className="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
 						<h2 className="text-xl font-semibold text-indigo-600 mb-4 flex items-center gap-2">
 							<FaUpload /> Upload Data
@@ -57,6 +91,7 @@ const Dashboard = () => {
 				</div>
 
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto mt-12">
+					{/* Chatbot */}
 					<div className="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
 						<h2 className="text-xl font-semibold text-indigo-600 mb-4 flex items-center gap-2">
 							<FaRobot /> AI Coach
@@ -72,6 +107,7 @@ const Dashboard = () => {
 						</Link>
 					</div>
 
+					{/* Gamification */}
 					<div className="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
 						<h2 className="text-xl font-semibold text-indigo-600 mb-4 flex items-center gap-2">
 							<FaTrophy /> Gamify Progress
