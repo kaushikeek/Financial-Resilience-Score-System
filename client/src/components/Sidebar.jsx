@@ -23,8 +23,10 @@ const Sidebar = () => {
 	};
 
 	const links = [
+		{ name: "Home", icon: <FaTachometerAlt />, path: "/" },
 		{ name: "Dashboard", icon: <FaTachometerAlt />, path: "/dashboard" },
 		{ name: "Score Details", icon: <FaChartLine />, path: "/score-details" },
+		{ name: "Forecast", icon: <FaChartLine />, path: "/forecast" },
 		{ name: "Upload", icon: <FaUpload />, path: "/upload" },
 		{ name: "AI Coach", icon: <FaRobot />, path: "/chatbot" },
 		{ name: "Gamification", icon: <FaTrophy />, path: "/gamification" },

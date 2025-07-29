@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import { FaInfoCircle } from "react-icons/fa";
 import { supabase } from "../lib/supabase";
 import MainLayout from "../layouts/MainLayout";
-
+import { useLocation } from "react-router-dom";
 const ScoreDetails = () => {
 	const [scoreData, setScoreData] = useState(null);
 	const [loading, setLoading] = useState(true);
-
+	const location = useLocation();
 	const fetchScore = async () => {
 		setLoading(true);
+
 		const {
 			data: { user },
 			error: userError,
@@ -20,27 +21,41 @@ const ScoreDetails = () => {
 			return;
 		}
 
-		const { data, error } = await supabase
-			.from("scores")
-			.select("*")
-			.eq("user_id", user.id)
-			.order("created_at", { ascending: false })
-			.limit(1)
-			.single();
+		try {
+			const res = await fetch(
+				`http://localhost:8000/api/score?user_id=${user.id}`
+			);
+			const data = await res.json();
 
-		if (error) {
-			console.error("Error fetching score:", error.message);
+			if (res.ok && data.score !== null) {
+				let parsedBreakdown = data.breakdown;
+				if (typeof data.breakdown === "string") {
+					try {
+						parsedBreakdown = JSON.parse(data.breakdown);
+					} catch (e) {
+						console.warn("Failed to parse breakdown:", e);
+						parsedBreakdown = null;
+					}
+				}
+				setScoreData({
+					score: data.score,
+					breakdown: parsedBreakdown,
+					created_at: data.created_at,
+				});
+			} else {
+				setScoreData(null);
+			}
+		} catch (error) {
+			console.error("Failed to fetch score:", error);
 			setScoreData(null);
-		} else {
-			setScoreData(data);
+		} finally {
+			setLoading(false);
 		}
-
-		setLoading(false);
 	};
 
 	useEffect(() => {
 		fetchScore();
-	}, []);
+	}, [location.search]);
 
 	return (
 		<MainLayout>
@@ -56,15 +71,14 @@ const ScoreDetails = () => {
 						<>
 							<div className="text-center mb-10">
 								<p className="text-6xl font-extrabold text-emerald-600">
-									{scoreData.score}
-								</p>
-								<p className="text-gray-600 text-lg mt-2">
-									Category:{" "}
-									<span className="font-semibold">{scoreData.category}</span>
+									{scoreData.score?.toFixed
+										? scoreData.score.toFixed(2)
+										: scoreData.score}
 								</p>
 								{scoreData.created_at && (
-									<p className="text-sm text-gray-400 mt-1">
-										Last updated: {new Date(scoreData.created_at).toLocaleString()}
+									<p className="text-sm text-gray-400 mt-2">
+										Last updated:{" "}
+										{new Date(scoreData.created_at).toLocaleString()}
 									</p>
 								)}
 							</div>
@@ -73,31 +87,25 @@ const ScoreDetails = () => {
 								Score Breakdown
 							</h2>
 
-							{Array.isArray(scoreData.explanation) &&
-							scoreData.explanation.length > 0 ? (
+							{scoreData.breakdown ? (
 								<ul className="space-y-4">
-									{scoreData.explanation.map((item, index) => (
-										<li
-											key={index}
-											className={`flex items-center justify-between p-4 rounded-lg border ${
-												item.impact === "positive"
-													? "bg-green-50 border-green-200"
-													: "bg-red-50 border-red-200"
-											}`}>
-											<span className="text-gray-800 font-medium flex items-center gap-2">
-												<FaInfoCircle className="text-gray-500" />
-												{item.label}
-											</span>
-											<span
-												className={`font-bold ${
-													item.impact === "positive"
-														? "text-green-600"
-														: "text-red-600"
-												}`}>
-												{item.value}
-											</span>
-										</li>
-									))}
+									{Object.entries(scoreData.breakdown).map(
+										([label, value], index) => (
+											<li
+												key={index}
+												className="flex items-center justify-between p-4 rounded-lg border bg-gray-50 border-gray-200">
+												<span className="text-gray-800 font-medium flex items-center gap-2">
+													<FaInfoCircle className="text-gray-500" />
+													{label
+														.replace(/_/g, " ")
+														.replace(/\b\w/g, (l) => l.toUpperCase())}
+												</span>
+												<span className="font-bold text-indigo-700">
+													{typeof value === "number" ? value.toFixed(2) : value}
+												</span>
+											</li>
+										)
+									)}
 								</ul>
 							) : (
 								<p className="text-center text-gray-500 italic">
