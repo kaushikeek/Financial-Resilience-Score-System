@@ -14,6 +14,7 @@ import Chatbot from "./pages/Chatbot";
 import StatementUpload from "./pages/StatementUpload";
 import Gamification from "./pages/Gamification";
 import Settings from "./pages/Settings";
+import Progress from "./pages/Progress";
 
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -122,6 +123,14 @@ function App() {
 					element={
 						<ProtectedLayout>
 							<Settings />
+						</ProtectedLayout>
+					}
+				/>
+				<Route
+					path="/progress"
+					element={
+						<ProtectedLayout>
+							<Progress />
 						</ProtectedLayout>
 					}
 				/>

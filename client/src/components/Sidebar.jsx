@@ -2,6 +2,9 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
 	FaTachometerAlt,
+	FaUser,
+	FaList,
+	FaHome,
 	FaChartLine,
 	FaUpload,
 	FaRobot,
@@ -23,9 +26,9 @@ const Sidebar = () => {
 	};
 
 	const links = [
-		{ name: "Home", icon: <FaTachometerAlt />, path: "/" },
-		{ name: "Dashboard", icon: <FaTachometerAlt />, path: "/dashboard" },
-		{ name: "Score Details", icon: <FaChartLine />, path: "/score-details" },
+		{ name: "Home", icon: <FaHome />, path: "/" },
+		{ name: "Dashboard", icon: <FaUser />, path: "/dashboard" },
+		{ name: "Score Details", icon: <FaList />, path: "/score-details" },
 		{ name: "Forecast", icon: <FaChartLine />, path: "/forecast" },
 		{ name: "Upload", icon: <FaUpload />, path: "/upload" },
 		{ name: "AI Coach", icon: <FaRobot />, path: "/chatbot" },

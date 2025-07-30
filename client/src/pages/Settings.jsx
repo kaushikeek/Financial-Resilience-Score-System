@@ -1,18 +1,72 @@
-import { useState } from "react";
-import Sidebar from "../components/Sidebar";
+import { useEffect, useState } from "react";
+import { supabase } from "../lib/supabase";
 import MainLayout from "../layouts/MainLayout";
-const Settings = () => {
-	const [emailNotifications, setEmailNotifications] = useState(true);
-	const [darkMode, setDarkMode] = useState(false);
+import axios from "axios";
 
-	const handleSave = () => {
-		// Placeholder for saving to Supabase
-		alert("Settings saved successfully!");
+const Settings = () => {
+	const [email, setEmail] = useState("");
+	const [emailNotifications, setEmailNotifications] = useState(false);
+	const [darkMode, setDarkMode] = useState(false);
+	const [loading, setLoading] = useState(true);
+
+	// Fetch user and settings on mount
+	useEffect(() => {
+		const fetchSettings = async () => {
+			const {
+				data: { user },
+				error,
+			} = await supabase.auth.getUser();
+			if (error || !user) {
+				console.error("Error fetching user:", error);
+				return;
+			}
+			setEmail(user.email);
+
+			try {
+				const res = await axios.get(`/api/settings/${user.id}`);
+				const settings = res.data;
+				setEmailNotifications(settings.email_notifications ?? false);
+				setDarkMode(settings.dark_mode ?? false);
+			} catch (err) {
+				console.error("Error fetching settings:", err);
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchSettings();
+	}, []);
+
+	const handleSave = async () => {
+		const {
+			data: { user },
+		} = await supabase.auth.getUser();
+
+		try {
+			await axios.put(`/api/settings/${user.id}`, {
+				email_notifications: emailNotifications,
+				dark_mode: darkMode,
+			});
+			alert("Settings saved successfully!");
+		} catch (err) {
+			console.error("Error saving settings:", err);
+			alert("Failed to save settings.");
+		}
 	};
+
+	if (loading) {
+		return (
+			<MainLayout>
+				<div className="min-h-screen flex items-center justify-center text-xl text-gray-500">
+					Loading settings...
+				</div>
+			</MainLayout>
+		);
+	}
 
 	return (
 		<MainLayout>
-			<div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-emerald-50 py-12 px-6">
+			<div className="min-h-screen bg-gradient-to-br from-sky-100 via-white to-emerald-100 py-12 px-6">
 				<h1 className="text-3xl font-bold text-center text-indigo-700 mb-10">
 					Account Settings
 				</h1>
@@ -30,7 +84,7 @@ const Settings = () => {
 								</label>
 								<input
 									type="email"
-									value="user@example.com"
+									value={email}
 									disabled
 									className="w-full px-4 py-2 rounded-lg border border-gray-300 bg-gray-100"
 								/>

@@ -1,22 +1,35 @@
 import { useEffect, useState } from "react";
-import Sidebar from "../components/Sidebar";
+import { supabase } from "../lib/supabase";
 import MainLayout from "../layouts/MainLayout";
-const mockForecastData = [
-	{ month: "Jul", income: 55000, expenses: 42000, savings: 13000 },
-	{ month: "Aug", income: 58000, expenses: 44000, savings: 14000 },
-	{ month: "Sep", income: 60000, expenses: 45000, savings: 15000 },
-	{ month: "Oct", income: 61000, expenses: 47000, savings: 14000 },
-	{ month: "Nov", income: 62000, expenses: 48000, savings: 14000 },
-];
 
 const Forecast = () => {
 	const [forecast, setForecast] = useState([]);
+	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		// Simulate API call
-		setTimeout(() => {
-			setForecast(mockForecastData);
-		}, 500);
+		const fetchForecast = async () => {
+			const {
+				data: { user },
+			} = await supabase.auth.getUser();
+
+			if (!user) return;
+
+			try {
+				const res = await fetch("http://localhost:8000/api/forecast", {
+					headers: {
+						"user-id": user.id,
+					},
+				});
+				const data = await res.json();
+				setForecast(data);
+			} catch (err) {
+				console.error("Failed to fetch forecast:", err);
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchForecast();
 	}, []);
 
 	return (
@@ -27,7 +40,9 @@ const Forecast = () => {
 						📊 Forecast Trends
 					</h1>
 
-					{forecast.length > 0 ? (
+					{loading ? (
+						<p className="text-center text-gray-500">Loading forecast...</p>
+					) : forecast.length > 0 ? (
 						<div className="overflow-x-auto">
 							<table className="min-w-full text-sm text-left text-gray-700">
 								<thead className="text-xs uppercase bg-indigo-50 text-indigo-700 border-b">
@@ -57,7 +72,9 @@ const Forecast = () => {
 							</table>
 						</div>
 					) : (
-						<p className="text-center text-gray-500">Loading forecast...</p>
+						<p className="text-center text-gray-500">
+							No forecast data available
+						</p>
 					)}
 				</div>
 			</div>

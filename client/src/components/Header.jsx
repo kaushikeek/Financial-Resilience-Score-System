@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
-import { FiLogOut, FiUser, FiUpload, FiHome } from "react-icons/fi";
+import { FaSignOutAlt, FaUpload, FaUser } from "react-icons/fa";
 
 const Header = () => {
 	const [session, setSession] = useState(null);
@@ -37,17 +37,17 @@ const Header = () => {
 							<Link
 								to="/dashboard"
 								className="hover:text-yellow-300 transition-all">
-								<FiHome className="inline mr-1" /> Dashboard
+								<FaUser className="inline mr-1" /> Dashboard
 							</Link>
 							<Link
 								to="/upload"
 								className="hover:text-yellow-300 transition-all">
-								<FiUpload className="inline mr-1" /> Upload
+								<FaUpload className="inline mr-1" /> Upload
 							</Link>
 							<button
 								onClick={handleLogout}
 								className="hover:text-red-300 transition-all">
-								<FiLogOut className="inline mr-1" /> Logout
+								<FaSignOutAlt className="inline mr-1" /> Logout
 							</button>
 						</>
 					) : (

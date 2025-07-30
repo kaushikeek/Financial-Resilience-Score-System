@@ -1,13 +1,37 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
 import { FaMedal, FaStar, FaChartLine, FaTrophy } from "react-icons/fa";
 import Sidebar from "../components/Sidebar";
 import MainLayout from "../layouts/MainLayout";
+import { supabase } from "../lib/supabase";
+import { useNavigate } from "react-router-dom";
 
 const Gamification = () => {
-	const mockStats = {
-		level: 3,
-		points: 1450,
-		badges: ["Budget Master", "Savings Champ", "Goal Setter"],
-	};
+	const [stats, setStats] = useState(null);
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		const fetchStats = async () => {
+			const {
+				data: { user },
+			} = await supabase.auth.getUser();
+
+			if (user) {
+				try {
+					const res = await axios.get(
+						`http://localhost:8000/api/gamification/${user.id}`
+					);
+					setStats(res.data);
+				} catch (error) {
+					console.error("Error fetching gamification data", error);
+				}
+			}
+		};
+
+		fetchStats();
+	}, []);
+
+	if (!stats) return <p className="text-center py-10">Loading...</p>;
 
 	return (
 		<MainLayout>
@@ -21,9 +45,7 @@ const Gamification = () => {
 					<div className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition">
 						<FaChartLine className="text-4xl text-emerald-500 mx-auto mb-4" />
 						<h2 className="text-xl font-semibold text-indigo-600">Level</h2>
-						<p className="text-2xl font-bold text-gray-800">
-							{mockStats.level}
-						</p>
+						<p className="text-2xl font-bold text-gray-800">{stats.level}</p>
 						<p className="text-sm text-gray-500 mt-1">Climb the ranks!</p>
 					</div>
 
@@ -31,9 +53,7 @@ const Gamification = () => {
 					<div className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition">
 						<FaStar className="text-4xl text-yellow-500 mx-auto mb-4" />
 						<h2 className="text-xl font-semibold text-indigo-600">Points</h2>
-						<p className="text-2xl font-bold text-gray-800">
-							{mockStats.points}
-						</p>
+						<p className="text-2xl font-bold text-gray-800">{stats.points}</p>
 						<p className="text-sm text-gray-500 mt-1">Earn as you learn.</p>
 					</div>
 
@@ -42,7 +62,7 @@ const Gamification = () => {
 						<FaTrophy className="text-4xl text-pink-500 mx-auto mb-4" />
 						<h2 className="text-xl font-semibold text-indigo-600">Badges</h2>
 						<ul className="mt-2 space-y-2 text-sm text-gray-700">
-							{mockStats.badges.map((badge, idx) => (
+							{stats.badges?.map((badge, idx) => (
 								<li
 									key={idx}
 									className="flex items-center justify-center gap-2">
@@ -60,7 +80,9 @@ const Gamification = () => {
 						Complete actions like uploading statements, improving your score,
 						and reaching goals to earn more!
 					</p>
-					<button className="bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-6 rounded-lg font-semibold transition">
+					<button
+						className="bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-6 rounded-lg font-semibold transition"
+						onClick={() => navigate("/progress")}>
 						View Full Progress
 					</button>
 				</div>
