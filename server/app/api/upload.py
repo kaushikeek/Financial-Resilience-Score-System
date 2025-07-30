@@ -90,12 +90,10 @@ async def upload_file(file: UploadFile = File(...), user_id: str = Form(...)):
         print(f"[INFO] Breakdown: {breakdown}")
 
         cursor.execute("""
-            INSERT INTO scores (user_id, score, breakdown)
-            VALUES (%s, %s, %s)
-            ON CONFLICT (user_id) DO UPDATE
-            SET score = EXCLUDED.score,
-                breakdown = EXCLUDED.breakdown
-        """, (user_id, resilience_score, json.dumps(breakdown)))
+    INSERT INTO scores (user_id, score, breakdown)
+    VALUES (%s, %s, %s)
+""", (user_id, resilience_score, json.dumps(breakdown)))
+
 
         conn.commit()
         print(f"[INFO] ✅ Score {resilience_score} inserted/updated for user {user_id}")

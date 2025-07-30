@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import upload, transactions, score, forecast
+from app.api import upload, transactions, score, forecast, settings, gamification
 
 app = FastAPI()
 
@@ -18,3 +18,5 @@ app.include_router(upload.router, prefix="/api")
 app.include_router(transactions.router, prefix="/api")
 app.include_router(score.router, prefix="/api")
 app.include_router(forecast.router, prefix="/api")
+app.include_router(settings.router, prefix="/api")
+app.include_router(gamification.router, prefix="/api")

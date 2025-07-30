@@ -29,22 +29,58 @@ class UploadResponse(BaseModel):
     transactions: Optional[List[TransactionOut]] = None
 
 
-# ----- Score Model -----
+# ----- Score Models -----
 
-class ScoreOut(BaseModel):
+class ScoreBase(BaseModel):
     user_id: str
     score: float
-    grade: str
-    updated_at: Optional[str] = None
+    grade: Optional[str] = None
+    breakdown: Optional[dict] = None
+
+class ScoreOut(ScoreBase):
+    id: int
+    created_at: str  # timestamp from DB
+
+class ScoreProgressEntry(BaseModel):
+    score: int
+    breakdown: dict
+    created_at: str
+
+class ScoreProgress(BaseModel):
+    scores: List[ScoreProgressEntry]
 
 
 # ----- Forecast Model -----
 
-class ForecastPoint(BaseModel):
+class ForecastDataOut(BaseModel):
     month: str
-    projected_score: float
+    income: float
+    expenses: float
+    savings: float
 
 
-class ForecastOut(BaseModel):
-    user_id: str
-    forecast: List[ForecastPoint]
+# ----- Settings Model -----
+class SettingsOut(BaseModel):
+    email_notifications: bool
+    dark_mode: bool
+
+class SettingsIn(SettingsOut):
+    pass
+
+
+# ----- Gamification Models -----
+
+
+class GamificationBase(BaseModel):
+    level: int
+    points: int
+    badges: List[str]
+
+class GamificationIn(GamificationBase):
+    pass  # used when inserting or updating
+
+class GamificationOut(BaseModel):
+    level: int
+    points: int
+    badges: List[str]
+

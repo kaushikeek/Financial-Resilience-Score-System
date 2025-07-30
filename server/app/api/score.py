@@ -1,7 +1,15 @@
 from fastapi import APIRouter, Query
 from app.db.connection import get_connection
 import json
+from fastapi import APIRouter, HTTPException
+from supabase import create_client, Client
+from app.models.schemas import ScoreOut, ScoreProgress
+import os
 
+
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 router = APIRouter()
 
 @router.get("/score")
@@ -32,3 +40,22 @@ def get_score(user_id: str = Query(...)):
         "created_at": None,
         "breakdown": None
     }
+
+@router.get("/progress/{user_id}", response_model=ScoreProgress)
+def get_score_progress(user_id: str):
+    try:
+        response = (
+            supabase
+            .table("scores")
+            .select("*")
+            .eq("user_id", user_id)
+            .order("created_at", desc=False)
+            .execute()
+        )
+
+        scores = response.data  # In v2, `.data` works correctly
+
+        return {"scores": scores}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
