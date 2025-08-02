@@ -57,6 +57,18 @@ const ScoreDetails = () => {
 		fetchScore();
 	}, [location.search]);
 
+	const INFO_MAP = {
+		income:
+			"Your total inflow of money over the evaluated period. A higher income improves your financial capacity.",
+		expenses:
+			"Your total spending during the period. Keeping expenses lower than income contributes to financial health.",
+		savings_rate:
+			"The percentage of your income that you save. A higher savings rate indicates better financial discipline.",
+		transaction_count:
+			"The total number of financial transactions recorded. Can reflect your financial activity and stability.",
+	};
+
+	const [tooltip, setTooltip] = useState({ index: null, visible: false });
 	return (
 		<MainLayout>
 			<div className="min-h-screen bg-gradient-to-br from-white to-emerald-50 py-12 px-6">
@@ -95,7 +107,21 @@ const ScoreDetails = () => {
 												key={index}
 												className="flex items-center justify-between p-4 rounded-lg border bg-gray-50 border-gray-200">
 												<span className="text-gray-800 font-medium flex items-center gap-2">
-													<FaInfoCircle className="text-gray-500" />
+													<div
+														className="relative"
+														onMouseEnter={() =>
+															setTooltip({ index, visible: true })
+														}
+														onMouseLeave={() =>
+															setTooltip({ index: null, visible: false })
+														}>
+														<FaInfoCircle className="text-gray-500" />
+														{tooltip.visible && tooltip.index === index && (
+															<div className="absolute left-6 top-1/2 transform -translate-y-1/2 z-10 w-64 p-2 text-sm bg-white border border-gray-300 rounded shadow">
+																{INFO_MAP[label] || "No information available."}
+															</div>
+														)}
+													</div>
 													{label
 														.replace(/_/g, " ")
 														.replace(/\b\w/g, (l) => l.toUpperCase())}

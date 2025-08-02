@@ -37,7 +37,7 @@ const Forecast = () => {
 			<div className="min-h-screen bg-gradient-to-br from-emerald-50 to-white py-12 px-6">
 				<div className="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow">
 					<h1 className="text-2xl font-bold text-indigo-700 mb-6 text-center">
-						📊 Forecast Trends
+						Forecast Trends
 					</h1>
 
 					{loading ? (

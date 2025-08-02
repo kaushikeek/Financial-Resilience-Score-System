@@ -37,16 +37,14 @@ const Header = () => {
 							<Link
 								to="/dashboard"
 								className="hover:text-yellow-300 transition-all">
-								<FaUser className="inline mr-1" /> Dashboard
+								<FaUser className="inline mr-1" /> Profile
 							</Link>
-							<Link
-								to="/upload"
-								className="hover:text-yellow-300 transition-all">
+							<Link to="/upload" className="hover:text-blue-800 transition-all">
 								<FaUpload className="inline mr-1" /> Upload
 							</Link>
 							<button
 								onClick={handleLogout}
-								className="hover:text-red-300 transition-all">
+								className="hover:text-red-500 transition-all">
 								<FaSignOutAlt className="inline mr-1" /> Logout
 							</button>
 						</>

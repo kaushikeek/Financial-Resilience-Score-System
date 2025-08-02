@@ -59,7 +59,7 @@ def get_forecast(request: Request, conn=Depends(get_connection)):
 
         income = round(avg_income, 2)
         expenses = round(avg_expenses, 2)
-        savings = round(income - expenses, 2)
+        savings = round(income + expenses, 2)
 
         forecast.append({
             "month": f"{month_name} {year}",

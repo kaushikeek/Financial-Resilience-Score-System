@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
 	FaTachometerAlt,
@@ -19,6 +19,12 @@ import { supabase } from "../lib/supabase";
 const Sidebar = () => {
 	const location = useLocation();
 	const [collapsed, setCollapsed] = useState(false);
+	const [initialized, setInitialized] = useState(false);
+
+	useEffect(() => {
+		// Delay rendering transitions until first render completes
+		setInitialized(true);
+	}, []);
 
 	const handleLogout = async () => {
 		await supabase.auth.signOut();
@@ -38,9 +44,9 @@ const Sidebar = () => {
 
 	return (
 		<aside
-			className={`h-screen fixed top-0 left-0 z-50 bg-white border-r shadow-sm transition-all duration-300 ${
+			className={`h-screen fixed top-0 left-0 z-50 bg-white border-r shadow-sm transition-all duration-300 ease-in-out ${
 				collapsed ? "w-20" : "w-60"
-			}`}>
+			} ${initialized ? "" : "opacity-0"}`}>
 			{/* Header */}
 			<div className="flex items-center justify-between p-4 border-b">
 				<span
@@ -50,13 +56,13 @@ const Sidebar = () => {
 					ResilienceScore
 				</span>
 				<button
-					onClick={() => setCollapsed(!collapsed)}
+					onClick={() => setCollapsed((prev) => !prev)}
 					className="text-gray-600 hover:text-emerald-600">
 					{collapsed ? <FaBars /> : <FaTimes />}
 				</button>
 			</div>
 
-			{/* Nav links */}
+			{/* Navigation */}
 			<nav className="flex flex-col p-4 gap-2 text-sm font-medium text-gray-700">
 				{links.map((link) => (
 					<Link

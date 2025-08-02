@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FaChartLine, FaUpload, FaRobot, FaTrophy } from "react-icons/fa";
@@ -54,7 +53,7 @@ const Dashboard = () => {
 						</p>
 						<Link
 							to="/score-details"
-							className="inline-block mt-4 text-indigo-600 hover:underline text-sm">
+							className="inline-block mt-4 text-indigo-600 hover:text-indigo-900 text-sm">
 							View Details →
 						</Link>
 					</div>
@@ -69,7 +68,7 @@ const Dashboard = () => {
 						</p>
 						<Link
 							to="/forecast"
-							className="inline-block mt-4 text-indigo-600 hover:underline text-sm">
+							className="inline-block mt-4 text-indigo-600 hover:text-indigo-900 text-sm">
 							View Forecast →
 						</Link>
 					</div>
@@ -84,7 +83,7 @@ const Dashboard = () => {
 						</p>
 						<Link
 							to="/upload"
-							className="inline-block mt-4 text-indigo-600 hover:underline text-sm">
+							className="inline-block mt-4 text-indigo-600 hover:text-indigo-900 text-sm">
 							Upload Now →
 						</Link>
 					</div>
@@ -102,7 +101,7 @@ const Dashboard = () => {
 						</p>
 						<Link
 							to="/chatbot"
-							className="inline-block mt-4 text-indigo-600 hover:underline text-sm">
+							className="inline-block mt-4 text-indigo-600 hover:text-indigo-900 text-sm">
 							Chat Now →
 						</Link>
 					</div>
@@ -117,7 +116,7 @@ const Dashboard = () => {
 						</p>
 						<Link
 							to="/gamification"
-							className="inline-block mt-4 text-indigo-600 hover:underline text-sm">
+							className="inline-block mt-4 text-indigo-600 hover:text-indigo-900 text-sm">
 							View Progress →
 						</Link>
 					</div>
