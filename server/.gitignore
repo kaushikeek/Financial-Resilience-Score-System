@@ -7,7 +7,7 @@ server/app/db/__pycache__/
 server/app/services/__pycache__/
 server/.pytest_cache/
 server/*.pyc
-
+__pychache__/
 # === Python Artifacts ===
 *.egg-info/
 *.egg
