@@ -24,7 +24,7 @@ The **Resilience Score** platform addresses this gap by:
 ## Key Features
 
 - **Secure Auth with Supabase**
-- **File Upload (PDF or CSV)** with instant parsing
+- **File Upload (CSV)** with instant parsing
 - **Real-Time Score Calculation**
 - **Trend Forecasts and Historical Progress Charts**
 - **AI Chatbot Resilio** (via Groq API)
