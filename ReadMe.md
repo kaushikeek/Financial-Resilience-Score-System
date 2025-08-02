@@ -90,7 +90,7 @@ Chat logic is handled in FastAPI (_chatbot.py_) and connects to Groq via _POST_ 
 
 ---
 
-## 🧠 Technologies Used
+## Technologies Used
 
 ### Frontend (React + Vite)
 
